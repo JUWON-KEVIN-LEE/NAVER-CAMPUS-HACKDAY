@@ -156,4 +156,9 @@ class VideoFragment : Fragment() {
                     }
         }
     }
+
+    override fun onPause() {
+        nPlayerHelper.stop()
+        super.onPause()
+    }
 }

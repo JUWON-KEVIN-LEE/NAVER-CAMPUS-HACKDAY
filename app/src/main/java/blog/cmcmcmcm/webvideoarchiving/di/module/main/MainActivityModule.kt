@@ -19,10 +19,10 @@ abstract class MainActivityModule {
     abstract fun activityContext(mainActivity: MainActivity): Context
 
     @PerFragment
-    @ContributesAndroidInjector(modules = [])
+    @ContributesAndroidInjector(modules = [/*WebFragmentModule::class*/])
     abstract fun webFragmentInjector(): WebFragment
 
     @PerFragment
-    @ContributesAndroidInjector(modules = [])
+    @ContributesAndroidInjector(modules = [/*VideoFragmentModule::class*/])
     abstract fun videoFragmentInjector(): VideoFragment
 }

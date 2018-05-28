@@ -38,7 +38,6 @@ class WebFragment : BaseSupportFragment(), View.OnClickListener,
     private val playerEventListener: PlayerEventListener? by lazy {
         context.takeIf { it is PlayerEventListener }
                 ?.let { context as PlayerEventListener }
-
     }
 
     override fun onAttach(context: Context?) {
@@ -182,12 +181,15 @@ class WebFragment : BaseSupportFragment(), View.OnClickListener,
         }
     }
 
-    override fun onBackPressed() {
-        if(webViewModel.playVideo.value!!)
+    override fun onBackPressed() : Boolean {
+        if(webViewModel.playVideo.value!!) {
             webViewModel.setPlayVideo(false)
-        else {
-            if(webView.canGoBack()) webView.goBack()
+            return true
+        } else if(webView.canGoBack()) {
+            webView.goBack()
+            return true
         }
+        return false
     }
 
     companion object {

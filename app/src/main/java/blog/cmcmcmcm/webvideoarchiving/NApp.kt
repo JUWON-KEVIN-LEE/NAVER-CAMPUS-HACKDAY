@@ -5,12 +5,13 @@ import dagger.android.AndroidInjector
 import dagger.android.DaggerApplication
 
 /**
- * https://android.jlelse.eu/new-android-injector-with-dagger-2-part-3-fe3924df6a89
+ *
  */
 class NApp : DaggerApplication() {
 
     override fun applicationInjector(): AndroidInjector<out DaggerApplication>
         = DaggerAppComponent.builder().create(this)
+
     /* in AndroidInjector.Builder
     @Override
     public final AndroidInjector<T> create(T instance) {

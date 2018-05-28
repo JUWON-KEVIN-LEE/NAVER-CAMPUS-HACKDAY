@@ -1,6 +1,5 @@
 package blog.cmcmcmcm.webvideoarchiving.ui.main
 
-import android.arch.lifecycle.ViewModelProviders
 import android.content.res.Configuration
 import android.databinding.DataBindingUtil
 import android.os.Bundle
@@ -14,6 +13,7 @@ import blog.cmcmcmcm.webvideoarchiving.ui.base.BaseActivity
 import blog.cmcmcmcm.webvideoarchiving.ui.main.video.VideoFragment
 import blog.cmcmcmcm.webvideoarchiving.ui.main.web.OnBackKeyListener
 import blog.cmcmcmcm.webvideoarchiving.ui.main.web.WebFragment
+import blog.cmcmcmcm.webvideoarchiving.util.extension.getViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
@@ -21,7 +21,6 @@ import javax.inject.Inject
  * if( SupportFragment 사용 ) : HasSupportFragmentInjector
  * else : HasFragmentInjector
  * TODO
- * player 중복 재생 문제
  * 앱 시작과 동시에 video fragment 자동 재생 - dependency scope
  * 트래킹 쉽게 코드 리팩토링
  * PlayerView + Control view vieholder 에서 복제되는 문제
@@ -32,9 +31,8 @@ class MainActivity : BaseActivity(), PlayerEventListener {
     @Inject
     lateinit var nPlayerHelper : NPlayerHelper
 
-    private val mainViewModel: MainViewModel by lazy {
-        ViewModelProviders.of(this).get(MainViewModel::class.java)
-    }
+    // use extension
+    private val mainViewModel: MainViewModel by lazy { getViewModel(MainViewModel::class.java) }
 
     var onBackKeyListener : OnBackKeyListener? = null
 
@@ -48,7 +46,7 @@ class MainActivity : BaseActivity(), PlayerEventListener {
             it.setLifecycleOwner(this)
         }
 
-        val fragmentList : List<Fragment> = listOf(WebFragment(), VideoFragment()) // TODO 의존성 ?
+        val fragmentList : List<Fragment> = listOf(WebFragment(), VideoFragment())
         initTabPager(binding.viewPager, binding.tabLayout, fragmentList)
     }
 
@@ -75,7 +73,8 @@ class MainActivity : BaseActivity(), PlayerEventListener {
     override fun onBackPressed() {
         onBackKeyListener
                 ?.takeIf { viewPager.currentItem == WEB_POSITION }
-                ?.run { onBackPressed() } // trigger web fragment onBackPressed()
+                // trigger web fragment onBackPressed()
+                ?.takeIf { it.onBackPressed() } // true = action consumed / false = not
                 ?: super.onBackPressed()
     }
 
@@ -87,11 +86,9 @@ class MainActivity : BaseActivity(), PlayerEventListener {
     override fun release() = nPlayerHelper.release()
 
     // full screen 관련 UI 변경은 activity 에서 처리하기 좋다
-    override fun enterFullscreen() {
-    }
+    override fun enterFullscreen() {}
 
-    override fun exitFullscreen() {
-    }
+    override fun exitFullscreen() {}
 
     override fun onConfigurationChanged(newConfig: Configuration?) {
         super.onConfigurationChanged(newConfig)
